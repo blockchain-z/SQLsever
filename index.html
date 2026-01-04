@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL 期末考模擬系統 // 科技版</title>
+    <title>SQL 期末考模擬系統 // 科技版 v2.0</title>
     <style>
-        /* --- 1. 核心科技風格設定 (Cyberpunk/Tech) --- */
+        /* --- 1. 核心科技風格設定 --- */
         :root {
             --bg-dark: #050a10;
-            --panel-bg: rgba(16, 24, 39, 0.85); /* 稍微調深一點增加文字可讀性 */
+            --panel-bg: rgba(16, 24, 39, 0.9); 
             --primary-cyan: #00f3ff;
             --neon-green: #39ff14;
             --alert-red: #ff073a;
             --text-main: #e0f2f1;
             --text-dim: #94a3b8;
-            --border-glow: 0 0 10px rgba(0, 243, 255, 0.3);
+            --accent-yellow: #f1c40f; /* 詳解提示色 */
         }
 
         body {
-            /* 加入微軟正黑體以確保中文顯示美觀，同時保留等寬字體風格 */
             font-family: "Microsoft JhengHei", "Segoe UI", "Roboto", monospace;
             background: radial-gradient(circle at center, #1a2c38 0%, #050a10 100%);
             color: var(--text-main);
@@ -30,7 +29,6 @@
             padding: 20px;
         }
 
-        /* 掃描線背景效果 */
         body::before {
             content: "";
             position: absolute;
@@ -52,34 +50,17 @@
             max-width: 800px;
             text-align: center;
             position: relative;
-            overflow: hidden;
-        }
-
-        /* 頂部裝飾條 */
-        .container::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
-            box-shadow: 0 0 10px var(--primary-cyan);
         }
 
         h1 {
             color: var(--primary-cyan);
-            font-weight: bold;
             letter-spacing: 2px;
             text-shadow: 0 0 10px rgba(0, 243, 255, 0.6);
             margin-bottom: 2rem;
             font-size: 1.8rem;
         }
 
-        h3 {
-            color: #fff;
-            font-weight: 500;
-            letter-spacing: 1px;
-        }
-
-        /* --- 2. 按鈕樣式 (Holographic Buttons) --- */
+        /* --- 2. 按鈕與選項 --- */
         .btn {
             padding: 12px 24px;
             font-size: 1rem;
@@ -90,131 +71,50 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin: 8px;
-            font-family: "Microsoft JhengHei", monospace;
+            font-family: inherit;
             font-weight: bold;
-            position: relative;
-            overflow: hidden;
         }
 
-        .btn:hover {
+        .btn:hover:not(:disabled) {
             background: var(--primary-cyan);
             color: #000;
             box-shadow: 0 0 20px var(--primary-cyan);
         }
 
-        /* 選項按鈕 */
         .btn-option {
-            display: block;
-            width: 100%;
-            margin: 15px 0;
-            padding: 18px;
-            text-align: left;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: block; width: 100%; margin: 12px 0; padding: 15px; text-align: left;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-dim);
-            font-weight: normal;
         }
 
-        .btn-option:hover:not(:disabled) {
-            border-color: var(--primary-cyan);
-            color: #fff;
-            box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2);
-        }
+        .btn-option.correct { background: rgba(57, 255, 20, 0.2); border-color: var(--neon-green); color: var(--neon-green); }
+        .btn-option.wrong { background: rgba(255, 7, 58, 0.2); border-color: var(--alert-red); color: var(--alert-red); }
 
-        /* 答題回饋 */
-        .btn-option.correct {
-            background: rgba(57, 255, 20, 0.2);
-            border-color: var(--neon-green);
-            color: var(--neon-green);
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4);
-            font-weight: bold;
-        }
-
-        .btn-option.wrong {
-            background: rgba(255, 7, 58, 0.2);
-            border-color: var(--alert-red);
-            color: var(--alert-red);
-        }
-
-        .btn-next {
-            background: var(--neon-green);
-            color: #000;
-            border: none;
-            display: none;
-            margin-top: 30px;
-            width: 100%;
-            font-size: 1.2rem;
-            box-shadow: 0 0 15px rgba(57, 255, 20, 0.5);
-        }
-        .btn-next:hover {
-            background: #fff;
-            box-shadow: 0 0 25px var(--neon-green);
-        }
-
-        /* --- 3. 狀態顯示 --- */
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--primary-cyan);
-            font-family: "Microsoft JhengHei", monospace;
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-
-        /* --- 4. 表格樣式 (Tech Grid) --- */
-        .table-container {
-            overflow-x: auto;
+        /* --- 3. 詳解區塊 --- */
+        #explanation-box {
             margin: 20px 0;
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .question-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-            color: var(--text-dim);
-        }
-
-        .question-table th, .question-table td {
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 12px;
+            padding: 15px;
+            background: rgba(0, 243, 255, 0.05);
+            border-left: 4px solid var(--primary-cyan);
             text-align: left;
+            line-height: 1.6;
+            display: none; /* 預設隱藏 */
+            animation: fadeIn 0.5s ease;
         }
 
-        .question-table th {
-            background-color: rgba(0, 243, 255, 0.15);
-            color: var(--primary-cyan);
-            font-weight: bold;
-        }
+        .exp-title { color: var(--primary-cyan); font-weight: bold; margin-bottom: 5px; display: block; }
 
-        .question-table tr:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- 5. 雜項 --- */
+        /* --- 4. 其他元件 --- */
+        .status-bar { display: flex; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--primary-cyan); font-weight: bold; }
+        .table-container { overflow-x: auto; margin: 20px 0; border: 1px solid rgba(0, 243, 255, 0.3); }
+        .question-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .question-table th, .question-table td { border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px; text-align: left; }
+        .question-table th { background: rgba(0, 243, 255, 0.2); }
         .hide { display: none; }
-        .score-big {
-            font-size: 5rem;
-            color: var(--primary-cyan);
-            font-family: 'Impact', sans-serif;
-            text-shadow: 0 0 20px var(--primary-cyan);
-            margin: 20px 0;
-        }
-        
-        /* 程式碼區塊樣式 */
-        code {
-            background: rgba(0,0,0,0.3);
-            padding: 2px 6px;
-            color: #ff79c6;
-            border-radius: 3px;
-            font-family: 'Consolas', monospace;
-            border: 1px solid rgba(255, 121, 198, 0.3);
-        }
-
+        .score-big { font-size: 4rem; color: var(--primary-cyan); text-shadow: 0 0 20px var(--primary-cyan); margin: 20px 0; }
+        code { background: rgba(0,0,0,0.4); padding: 2px 5px; color: #ff79c6; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -225,7 +125,6 @@
         <p style="color: var(--text-dim); margin-bottom: 30px;">請選擇測驗模式：</p>
         <button class="btn" onclick="startQuiz(10)">[ 10 題速測 ]</button>
         <button class="btn" onclick="startQuiz(25)">[ 25 題練習 ]</button>
-        <button class="btn" onclick="startQuiz(50)">[ 50 題挑戰 ]</button>
         <button class="btn" onclick="startQuiz('all')">[ 完整題庫刷題 ]</button>
     </div>
 
@@ -235,304 +134,360 @@
             <span id="score-text">得分：0</span>
         </div>
         
-        <h3 id="question-text" style="text-align: left; line-height: 1.6;">資料載入中...</h3>
+        <h3 id="question-text" style="text-align: left; line-height: 1.5;">載入中...</h3>
         
         <div id="table-display" class="table-container hide"></div>
         
         <div id="options-container"></div>
+
+        <div id="explanation-box">
+            <span class="exp-title"> <i class="icon"></i> 系統解析 // ANALYSIS:</span>
+            <div id="explanation-content" style="color: #fff;"></div>
+        </div>
         
-        <button id="next-btn" class="btn btn-next" onclick="nextQuestion()">確認 // 下一題 >></button>
+        <button id="next-btn" class="btn" style="display:none; width:100%; background:var(--neon-green); color:#000; border:none;" onclick="nextQuestion()">確認 // 下一題 >></button>
     </div>
 
     <div id="result-screen" class="hide">
         <h1>測驗程序結束</h1>
-        <p style="color: var(--text-dim);">最終成績結算：</p>
         <div id="final-score" class="score-big">0</div>
         <p id="feedback-msg"></p>
-        <button class="btn" style="margin-top:30px; border-color: var(--neon-green); color: var(--neon-green);" onclick="location.reload()">[ 重新啟動系統 ]</button>
+        <button class="btn" onclick="location.reload()">[ 重新啟動系統 ]</button>
     </div>
 </div>
 
 <script>
-    // --- HTML 表格數據 (與題目配套) ---
+    // --- 題目數據 (新增了 explanation 欄位) ---
+// --- 1. 定義題目所需的 HTML 表格字串 (這部分你之前漏掉了) ---
+const t_emp = `
+<table class="question-table">
+    <tr><th>資料行名稱</th><th>資料類型</th></tr>
+    <tr><td>員工編號</td><td>int</td></tr>
+    <tr><td>姓名</td><td>varchar(20)</td></tr>
+    <tr><td>職稱</td><td>varchar(20)</td></tr>
+    <tr><td>性別</td><td>varchar(2)</td></tr>
+</table>`;
+
+const t_car = `
+<table class="question-table">
+    <tr><th>Type</th><th>Color</th><th>Origin</th></tr>
+    <tr><td>Sedan</td><td>Red</td><td>Japan</td></tr>
+    <tr><td>Truck</td><td>Red</td><td>USA</td></tr>
+    <tr><td>Minivan</td><td>Silver</td><td>Japan</td></tr>
+    <tr><td>Hatchback</td><td>Red</td><td>Japan</td></tr>
+    <tr><td>SUV</td><td>Silver</td><td>Germany</td></tr>
+</table>`;
+
+// --- 2. 完整題庫數據庫 ---
+const questionBank = [
+    // 1. DDL & 資料型態
+    { 
+        q: "如果想利用 SQL DDL 語法建立一個名稱為 Chihlee 的資料表，下列語法何者正確？", 
+        options: ["CREATE TABLE Chihlee (...)", "ALTER DATABASE Chihlee (...)", "DROP DATABASE Chihlee (...)", "CREATE DATABASE Chihlee (...)"], 
+        answer: 0,
+        explanation: "<b>CREATE TABLE</b> 是資料定義語言 (DDL) 中用來建立新資料表的標準指令。CREATE DATABASE 則是用來建立整個資料庫空間。"
+    },
+    { 
+        q: "若要在資料庫中新增一個欄位來儲存同學的姓名(可能有造字)，則應該將資料類型設定為何？", 
+        options: ["char", "varchar", "nvarchar", "int"], 
+        answer: 2,
+        explanation: "<b>nvarchar</b> 中的 'n' 代表 Unicode 編碼，能夠支援多國語系及特殊造字；'varchar' 則主要支援一般英數字。"
+    },
+    { 
+        q: "若要在資料庫中儲存同學的身分證號(如:A123456789)，何種類型較適合？", 
+        options: ["char(10)", "int", "float", "datetime"], 
+        answer: 0,
+        explanation: "身分證字號長度固定為 10 碼且包含英文，使用定長字串 <b>char(10)</b> 效能最優且符合格式。"
+    },
+    { 
+        q: "若要儲存電話號碼(如:02-22576167)，何種類型較適合？", 
+        options: ["char", "int", "float", "datetime"], 
+        answer: 0,
+        explanation: "電話號碼包含連字號 '-'，屬於非數值運算的字元，應選用 <b>char</b> 或 varchar。"
+    },
+    { 
+        q: "若要儲存出生年月日(如:1985-01-01)，何種類型較適合？", 
+        options: ["char", "int", "float", "date"], 
+        answer: 3,
+        explanation: "<b>date</b> 類型專門儲存日期（不含時間），比字串格式更節省空間並支援日期運算。"
+    },
+    { 
+        q: "若要儲存成績(如:90.50)，何種類型較適合？", 
+        options: ["int", "tinyint", "money", "numeric"], 
+        answer: 3,
+        explanation: "<b>numeric</b> (或 decimal) 可精確定義總位數與小數位數，適合儲存有小數點的數值資料。"
+    },
+    { 
+        q: "若要儲存學費(如:23,570)，且輸入時能以三位數逗號分隔輸入，何種類型較適合？", 
+        options: ["int", "tinyint", "money", "numeric"], 
+        answer: 2,
+        explanation: "<b>money</b> 類型專門處理貨幣數據，支援財務格式化呈現與精確計算。"
+    },
+    { 
+        q: "若數字資料範圍介於 -100 到 100 之間，選擇哪一種類型較適合？", 
+        options: ["char", "int", "float", "datetime"], 
+        answer: 1,
+        explanation: "範圍包含負數且為整數，<b>int</b> (或 smallint) 是正確選擇；tinyint 僅支援 0~255。"
+    },
+    { 
+        q: "若希望輸入資料行時系統可以有預設值，要在哪處設定？", 
+        options: ["允許NULL", "長度", "資料類型", "預設值或繫結"], 
+        answer: 3,
+        explanation: "<b>預設值 (DEFAULT)</b> 屬性用於當 Insert 語法未指定該欄位值時，系統自動填入的值。"
+    },
+    { 
+        q: "若預設值要設定為「輸入資料的當天日期」，應設定什麼？", 
+        options: ["DATE()", "getday()", "getdate()", "getnow()"], 
+        answer: 2,
+        explanation: "在 SQL Server 中，<b>getdate()</b> 函數會回傳伺服器目前的系統日期與時間。"
+    },
+
+    // 2. 條件約束 & 進階 DDL
+    { 
+        q: "在建立關聯時，設定刪除規格為『沒有動作 (NO ACTION)』代表？", 
+        options: ["沒有動作(NO ACTION)", "重疊顯示(CASCADE)", "設定為Null(SET NULL)", "設定為預設值(SET DEFAULT)"], 
+        answer: 0,
+        explanation: "<b>NO ACTION</b> 會在嘗試刪除被關聯的主鍵時拋出錯誤，阻止刪除動作以保護資料完整性。"
+    },
+    { 
+        q: "希望刪除主表資料時，子表對應資料也一併刪除，應設定？", 
+        options: ["沒有動作(NO ACTION)", "重疊顯示(CASCADE)", "設定為Null(SET NULL)", "設定為預設值(SET DEFAULT)"], 
+        answer: 1,
+        explanation: "<b>CASCADE (級聯/重疊)</b> 代表父表的變動會「像瀑布一樣」連帶影響到子表。"
+    },
+    { 
+        q: "希望主鍵刪除時，子表對應欄位設為空值，應設定？", 
+        options: ["沒有動作(NO ACTION)", "重疊顯示(CASCADE)", "設定為Null(SET NULL)", "設定為預設值(SET DEFAULT)"], 
+        answer: 2,
+        explanation: "<b>SET NULL</b> 會在父資料消失時，自動將關聯的外鍵欄位清除為 NULL。"
+    },
+    { 
+        q: "關於計算欄位 (Computed Columns) 的敘述，下列何者錯誤？", 
+        options: ["是一種沒有儲存值的資料表欄位", "值可由同記錄其他欄位運算而來", "它可以指定DEFAULT屬性", "它是一種虛擬欄位"], 
+        answer: 2,
+        explanation: "<b>錯誤。</b>計算欄位是根據公式自動生成的，因此<b>不能手動指定 DEFAULT 屬性</b>。"
+    },
+    { 
+        q: "關於條件限制 (Constraints) 的敘述，下列何者錯誤？", 
+        options: ["可以定義檢查規則", "若主索引鍵由多個欄位組成，可在行定義中描述", "單一欄位限制為行層級", "多欄位限制為表層級"], 
+        answer: 1,
+        explanation: "<b>錯誤。</b>若主鍵由多個欄位組成（複合主鍵），必須在資料表定義的最末端以「資料表層級」方式定義。"
+    },
+    { 
+        q: "執行：<code>ALTER TABLE 借閱紀錄 DROP COLUMN 歸還日期, 逾期罰金</code> 結果為何？", 
+        options: ["刪除歸還日期", "刪除逾期罰金", "一併刪除該兩欄位", "刪除整個資料表"], 
+        answer: 2,
+        explanation: "ALTER TABLE 配合 <b>DROP COLUMN</b> 並用逗號隔開多個欄位，可同時移除多個結構。"
+    },
+    { 
+        q: "若執行 <code>ALTER TABLE Person ADD Prefix varchar(4) NOT NULL;</code> 出錯，原因可能為？", 
+        options: ["應使用DEFAULT設定值", "Person表是空的", "varchar不適用", "應先執行DROP"], 
+        answer: 0,
+        explanation: "若表格已有舊資料，新增一個 <b>NOT NULL</b> 欄位會因舊資料無值而失敗，此時必須提供 <b>DEFAULT</b> 預設值。"
+    },
+
+    // 3. SQL 函數
+    { 
+        q: "執行 SQL：<code>SELECT ROUND(78.94, -1)</code> 結果為何？", 
+        options: ["78.94", "78.95", "79.00", "80.00"], 
+        answer: 3,
+        explanation: "ROUND 參數為 -1 代表<b>四捨五入到十位數</b>。78 四捨五入後為 80。"
+    },
+    { 
+        q: "執行 SQL：<code>SELECT CEILING(89.3)</code> 結果為何？", 
+        options: ["89.3", "89.4", "89.0", "90.0"], 
+        answer: 3,
+        explanation: "<b>CEILING</b> (天花板函數) 會回傳大於或等於該數值的最小整數（無條件進位）。"
+    },
+    { 
+        q: "執行 SQL：<code>SELECT SQRT(25)</code> 結果為何？", 
+        options: ["0", "5", "25", "625"], 
+        answer: 1,
+        explanation: "<b>SQRT</b> 是求平方根。25 的平方根為 5。"
+    },
+    { 
+        q: "執行 SQL：<code>SELECT SQUARE(4)</code> 結果為何？", 
+        options: ["0", "2", "4", "16"], 
+        answer: 3,
+        explanation: "<b>SQUARE</b> 是求平方。4 的平方 (4*4) 為 16。"
+    },
+    { 
+        q: "執行 SQL：<code>SELECT CAST('123' AS INT)</code> 的轉換函數是？", 
+        options: ["CAST", "SORT", "ROUND", "ABS"], 
+        answer: 0,
+        explanation: "<b>CAST</b> 與 CONVERT 都是 SQL 中用於進行資料型態轉換的標準函數。"
+    },
+    { 
+        q: "執行 SQL：<code>SELECT DATEPART(month, '2019-3-20')</code> 結果為何？", 
+        options: ["2019", "1", "3", "20"], 
+        answer: 2,
+        explanation: "<b>DATEPART(month, ...)</b> 會擷取日期中的月份部分。結果為 3。"
+    },
+    { 
+        q: "執行 SQL：<code>SELECT DATEADD(month, 1, '2018-01-31')</code> 結果為何？", 
+        options: ["2019-01-31", "2018-02-28", "2018-04-30", "2017-10-31"], 
+        answer: 1,
+        explanation: "1月31日加一個月應為2月，但2月沒有31日，系統會自動校正為該月最後一天 <b>02-28</b>。"
+    },
+    { 
+        q: "執行 SQL：<code>SELECT DATEDIFF(yy, '2019/12/05', '2017/01/01')</code> 結果為何？", 
+        options: ["1", "-2", "16", "19"], 
+        answer: 1,
+        explanation: "DATEDIFF 會用後者減去前者。2017 - 2019 = <b>-2</b>。"
+    },
+    { 
+        q: "執行 SQL：<code>SELECT LEN('chihlee')</code> 結果為何？", 
+        options: ["6", "7", "8", "9"], 
+        answer: 1,
+        explanation: "<b>LEN</b> 函數計算字串中的字元數量。'chihlee' 共 7 個字母。"
+    },
+    { 
+        q: "執行 SQL：<code>SELECT CHARINDEX('致理','致理科技大學:致理人', 4)</code> 結果為何？", 
+        options: ["0", "1", "8", "14"], 
+        answer: 2,
+        explanation: "從第 4 個字開始找，找到的第二個 '致理' 出現在第 <b>8</b> 個位置。"
+    },
+    { 
+        q: "執行 SQL：<code>SELECT LEFT('CHIHLEE', 3)</code> 結果為何？", 
+        options: ["CHI", "HLE", "LEE", "CHIHLEE"], 
+        answer: 0,
+        explanation: "<b>LEFT(str, 3)</b> 會從左側開始擷取 3 個字元。結果為 CHI。"
+    },
+
+    // 4. SELECT 查詢 & 邏輯
+    { 
+        q: "想要顯示 [員工] 資料表的所有內容，語法何者正確？", 
+        table: t_emp,
+        options: ["SELECT 員工編號 FROM 員工", "SELECT * FROM 員工", "SELECT FROM 員工", "SHOW 員工"], 
+        answer: 1,
+        explanation: "星號 <b>*</b> 在 SQL 中代表「所有資料行」。"
+    },
+    { 
+        q: "若要依 [員工編號] 遞減排序，語法應加上？", 
+        table: t_emp,
+        options: ["ORDER BY 員工編號", "ORDER BY 員工編號 ASC", "SORT BY 員工編號", "ORDER BY 員工編號 DESC"], 
+        answer: 3,
+        explanation: "排序使用 ORDER BY，遞減需指定 <b>DESC</b>；ASC 則是預設的遞增排序。"
+    },
+    { 
+        q: "SQL 語法中，哪個關鍵字可避免查詢結果重複？", 
+        options: ["ONLY", "UNIQUE", "NOT SAME", "DISTINCT"], 
+        answer: 3,
+        explanation: "<b>DISTINCT</b> 會過濾掉結果集中完全重複的資料列。"
+    },
+    { 
+        q: "針對「群組化後」的結果進行條件篩選，要使用哪個子句？", 
+        options: ["WHERE", "ORDER BY", "HAVING", "GROUP BY"], 
+        answer: 2,
+        explanation: "WHERE 是篩選原始資料，<b>HAVING</b> 則是專門用來篩選 GROUP BY 之後的群組資料。"
+    },
+    { 
+        q: "有一個 Cars 表，執行 <code>SELECT * FROM Cars WHERE Origin <> 'USA' AND Color <> 'Black'</code> 回傳幾筆？", 
+        table: t_car,
+        options: ["4", "5", "6", "7"], 
+        answer: 0,
+        explanation: "符合條件：Sedan(Japan,Red), Minivan(Japan,Silver), Hatchback(Japan,Red), SUV(Germany,Silver)。共 <b>4</b> 筆。"
+    },
+    { 
+        q: "如何移除一個已經建立的「外部索引鍵 (Foreign Key)」？", 
+        options: ["DELETE TABLE", "DELETE FOREIGN KEY", "ALTER FOREIGN KEY", "ALTER TABLE"], 
+        answer: 3,
+        explanation: "約束（Constraint）是資料表結構的一部分，必須透過 <b>ALTER TABLE [表名] DROP CONSTRAINT [約束名]</b> 來移除。"
+    }
+];
+
+// --- 3. 系統邏輯控制 ---
+let currentQuestions = [];
+let currentQuestionIndex = 0;
+let score = 0;
+let isAnswered = false;
+
+// 這裡之後接續你原本的 startQuiz, loadQuestion, checkAnswer 等函式...
+const quizScreen = document.getElementById('quiz-screen');
+const questionText = document.getElementById('question-text');
+const optionsContainer = document.getElementById('options-container');
+const expBox = document.getElementById('explanation-box');
+const expContent = document.getElementById('explanation-content');
+const nextBtn = document.getElementById('next-btn');
+
+function startQuiz(amount) {
+    const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+    currentQuestions = (amount === 'all') ? shuffled : shuffled.slice(0, amount);
     
-    const t_emp = `
-        <table class="question-table">
-            <tr><th>資料行名稱</th><th>資料類型</th></tr>
-            <tr><td>員工編號</td><td>int</td></tr>
-            <tr><td>姓名</td><td>varchar(20)</td></tr>
-            <tr><td>職稱</td><td>varchar(20)</td></tr>
-            <tr><td>性別</td><td>varchar(2)</td></tr>
-            <tr><td>主管</td><td>int</td></tr>
-            <tr><td>出生日期</td><td>date</td></tr>
-            <tr><td>任用日期</td><td>date</td></tr>
-            <tr><td>區域號碼</td><td>varchar(10)</td></tr>
-            <tr><td>地址</td><td>varchar(60)</td></tr>
-            <tr><td>分機號碼</td><td>varchar(4)</td></tr>
-        </table>`;
+    currentQuestionIndex = 0; score = 0;
+    document.getElementById('start-screen').classList.add('hide');
+    quizScreen.classList.remove('hide');
+    loadQuestion();
+}
 
-    const t_att = `
-        <table class="question-table">
-            <tr><th>StudentName</th><th>Grade Level</th><th>DaysAbsent</th></tr>
-            <tr><td>John</td><td>12</td><td>12.5</td></tr>
-            <tr><td>Holly</td><td>12</td><td>10</td></tr>
-            <tr><td>David</td><td>12</td><td>3</td></tr>
-        </table>`;
+function loadQuestion() {
+    isAnswered = false;
+    expBox.style.display = 'none';
+    nextBtn.style.display = 'none';
+    
+    const q = currentQuestions[currentQuestionIndex];
+    document.getElementById('progress-text').innerText = `進度：${currentQuestionIndex + 1} / ${currentQuestions.length}`;
+    document.getElementById('score-text').innerText = `得分：${Math.round((score/currentQuestions.length)*100) || 0} %`;
+    
+    questionText.innerHTML = q.q;
 
-    const t_car = `
-        <table class="question-table">
-            <tr><th>Type</th><th>Color</th><th>Origin</th></tr>
-            <tr><td>Sedan</td><td>Red</td><td>Japan</td></tr>
-            <tr><td>Truck</td><td>Red</td><td>USA</td></tr>
-            <tr><td>Minivan</td><td>Silver</td><td>Japan</td></tr>
-            <tr><td>Hatchback</td><td>Red</td><td>Japan</td></tr>
-            <tr><td>Compact</td><td>Black</td><td>Japan</td></tr>
-            <tr><td>SUV</td><td>Silver</td><td>Germany</td></tr>
-            <tr><td>Convertible</td><td>Black</td><td>USA</td></tr>
-            <tr><td>Hybrid</td><td>Black</td><td>Germany</td></tr>
-        </table>`;
-
-    const t_stu = `
-        <table class="question-table">
-            <tr><th>ID</th><th>Name</th><th>Age</th></tr>
-            <tr><td>1</td><td>Rene</td><td>18</td></tr>
-            <tr><td>2</td><td>Tia</td><td>22</td></tr>
-            <tr><td>3</td><td>Oliver</td><td>25</td></tr>
-        </table>`;
-
-    // --- 完整題庫 (包含所有題目) ---
-    const questionBank = [
-      // 1. DDL & Types
-      { q: "如果想利用 SQL DDL 語法建立一個名稱為 Chihlee 的資料表，下列語法何者正確？", options: ["CREATE TABLE Chihlee (...)", "ALTER DATABASE Chihlee (...)", "DROP DATABASE Chihlee (...)", "CREATE DATABASE Chihlee (...)"], answer: 0 },
-      { q: "若我們要在資料庫中新增一個欄位來儲存同學的姓名(可能有造字)，則應該要將資料類型設定為何種類型較適合？", options: ["char", "varchar", "nvarchar", "int"], answer: 2 },
-      { q: "若我們要在資料庫中新增一個欄位來儲存同學的身分證號(如:A123456789)，則應該要將資料類型設定為何種類型較適合？", options: ["char", "int", "float", "datetime"], answer: 0 },
-      { q: "若我們要在資料庫中新增一個欄位來儲存同學的電話號碼(如:02-22576167)，則應該要將資料類型設定為何種類型較適合？", options: ["char", "int", "float", "datetime"], answer: 0 },
-      { q: "若我們要在資料庫中新增一個欄位來儲存同學的出生年月日(如:1985-01-01)，則應該要將資料類型設定為何種類型較適合？", options: ["char", "int", "float", "date"], answer: 3 },
-      { q: "若我們要在資料庫中新增一個欄位來儲存同學的成績(如:90.50)，則應該要將資料類型設定為何種類型較適合？", options: ["int", "tinyint", "money", "numeric"], answer: 3 },
-      { q: "若我們要在資料庫中新增一個欄位來儲存同學的學費金額(如:23,570)、允許使用者輸入資料時能以每三位數加上一個逗號的方式輸入，則應該要將資料類型設定為何種類型較適合？", options: ["int", "tinyint", "money", "numeric"], answer: 2 },
-      { q: "如果數字資料的範圍介於-100到100之間，則選擇數字類型中哪一種類型較適合？", options: ["char", "int", "float", "datetime"], answer: 1 },
-      { q: "若希望輸入資料行(欄位)資料時，系統可以有預設值，我們可以在資料行屬性中何處做設定？", options: ["允許NULL", "長度", "資料類型", "預設值或繫結"], answer: 3 },
-      { q: "若希望輸入資料行(欄位)資料時，系統的預設值為輸入資料的當天日期，我們可以在資料行屬性中設定甚麼？", options: ["DATE()", "getday()", "getdate()", "getnow()"], answer: 2 },
-      
-      // 2. Constraints & Advanced DDL
-      { q: "在建立資料表關聯性時，若設定刪除規格為『沒有動作 (NO ACTION)』，這代表什麼意思？", options: ["沒有動作(NO ACTION)", "重疊顯示(CASCADE)", "設定為Null(SET NULL)", "設定為預設值(SET DEFAULT)"], answer: 0 },
-      { q: "若是希望刪除主索引鍵資料表(父資料表)的某個key值時，外部索引鍵資料表(子資料表)的key值也會一併被刪除，應該設定為哪個選項？", options: ["沒有動作(NO ACTION)", "重疊顯示(CASCADE)", "設定為Null(SET NULL)", "設定為預設值(SET DEFAULT)"], answer: 1 },
-      { q: "若是希望主索引鍵被刪除時，子資料表的對應欄位自動設定為 Null，應該設定為哪個選項？", options: ["沒有動作(NO ACTION)", "重疊顯示(CASCADE)", "設定為Null(SET NULL)", "設定為預設值(SET DEFAULT)"], answer: 2 },
-      { q: "若是希望主索引鍵被刪除時，子資料表的對應欄位自動設定為預設值，應該設定為哪個選項？", options: ["沒有動作(NO ACTION)", "重疊顯示(CASCADE)", "設定為Null(SET NULL)", "設定為預設值(SET DEFAULT)"], answer: 3 },
-      { q: "利用【資料庫圖表】建立資料表關聯性時，下列哪個方法可以加入其他資料表？", options: ["利用工具列上的【加入資料表】紐", "利用功能表上的【資料庫圖表】\\【加入資料表】選項", "利用滑鼠在空白處按下右鍵,點選【加入資料表】選項", "以上皆可"], answer: 3 },
-      { q: "建立資料表時，資料行定義(Column Definition)部分，可以是？", options: ["基本資料行定義", "其他資料行導出", "透過計算導出", "以上皆是"], answer: 3 },
-      { q: "建立資料表時，假如資料庫名稱為myDB，要建立的資料表為myTable，於建立資料表的語法中，資料表名稱表示方式下列何者正確？", options: ["myDB.dbo.myTable", "dbo.myTable", "myTable", "以上皆是"], answer: 3 },
-      { q: "關於計算欄位(Computed Columns)的敘述，下列何者錯誤？", options: ["是一種沒有儲存值的資料表欄位", "它的值可能是使用同一筆記錄中，其他欄位建立的運算式計算而來", "它可以指定DEFAULT、NOT NULL等欄位屬性和條件約束", "它沒有真正儲存資料，而是從其他欄位計算出，所以是一種虛擬欄位"], answer: 2 },
-      { q: "建立資料表時，關於條件限制(Constraints)的敘述，下列何者錯誤？", options: ["可以定義欄位的檢查規則", "若主索引鍵是由多個資料行所組成，限制條件可以在資料行定義中描述", "針對單一欄位值的條件限制為資料行層級條件限制", "針對多個欄位值的條件限制為資料表層級條件限制"], answer: 1 },
-      { q: "使用DDL的CREATE TABLE敘述來建立資料表時，必須先做資料庫切換動作，假如資料庫為myDB，切換資料庫語法何者正確？", options: ["USE myDB", "CALL myDB", "Change myDB", "TURN myDB"], answer: 0 },
-
-      // 3. DDL Implementation
-      { q: "使用SQL DDL語法建立資料表時，若要建立借閱日期預設值為借閱當日，於當行資料行語法寫法，下列何者正確？", options: ["借閱日期 DATETIME NOT NULL DEFAULT NOW()", "借閱日期 DATETIME DEFAULT GETDATE() NOT NULL", "借閱日期 DEFAULT GETDATE() DATETIME NOT NULL", "DEFAULT GETDATE() 借閱日期 DATETIME NOT NULL"], answer: 1 },
-      { q: "使用SQL DDL語法建立資料表時，若要建立預計歸還日期的預設值為借閱當日七日後歸還，下列何者正確？", options: ["預計歸還日期 NOT NULL DATE DEFAULT GETDATE() + 7", "預計歸還日期 DEFAULT GETDATE() + 7 DATE NOT NULL", "預計歸還日期 DATE DEFAULT GETDATE() + 7 NOT NULL", "DEFAULT GETDATE() + 7 預計歸還日期 DATE NOT NULL"], answer: 2 },
-      { q: "如果想利用SQL DDL語法刪除一個名稱為myTable的資料表，下列語法何者正確？", options: ["CREATE TABLE myTable", "ALTER TABLE myTable", "CREATE DATABASE myTable", "DROP TABLE myTable"], answer: 3 },
-      { q: "請問執行下圖SQL DDL的語法，結果會如何？<br><code>ALTER TABLE 借閱紀錄 ALTER COLUMN 歸還日期 DATETIME</code>", options: ["修改資料表【借閱紀錄】，將欄位【歸還日期】的資料型態改為DATETIME", "修改資料表【借閱紀錄】的名稱為【歸還日期】", "修改資料表【歸還日期】，將欄位【借閱紀錄】的資料型態改為DATETIME", "修改資料表【歸還日期】的名稱【為借閱紀錄】"], answer: 0 },
-      { q: "請問執行下圖SQL DDL的語法，結果會如何？<br><code>ALTER TABLE 借閱紀錄 DROP COLUMN 歸還日期, 逾期罰金</code>", options: ["修改資料表【借閱紀錄】，將欄位【歸還日期】刪除", "修改資料表【借閱紀錄】，將欄位【逾期罰金】刪除", "修改資料表【借閱紀錄】，將欄位【歸還日期】、【逾期罰金】一併刪除", "修改資料表【借閱紀錄】，將整個資料表【借閱紀錄】刪除"], answer: 2 },
-      { q: "請問執行下圖SQL DDL的語法，結果會如何？<br><code>ALTER TABLE 借閱紀錄 ALTER COLUMN 借閱日期 DATETIME NOT NULL</code>", options: ["修改資料表【借閱紀錄】 將欄位【DATATIME】設為不可為空值", "修改資料表【借閱紀錄】 將欄位【借閱日期】的資料型態改為DATATIME", "修改資料表【借閱紀錄】，將欄位【借閱日期】的限制設為不可為空值", "修改資料表【借閱紀錄】，將欄位【借閱日期】的資料型態改為DATATIME，同時限制設為不可為空值"], answer: 3 },
-      { q: "您正在開發一個SQL陳述式以建立資料表。請問哪兩個SQL關鍵字用於CREATE TABLE陳述式？", options: ["INSERT INTO", "ORDER BY", "PRIMARY KEY", "CONSTRAINT"], answer: 2 },
-      { q: "您需要刪除某個資料庫資料表。請問您應該使用哪一個資料定義語言(DDL)關鍵字？", options: ["TRUNCATE", "ALTER", "DROP", "DELETE"], answer: 2 },
-      
-      // 4. Table-Based Questions
-      { q: "請問關聯式資料庫會使用哪一項功能來確保輸入資料行中的資料正確？", options: ["屬性", "主索素引鍵", "條件約束", "索引"], answer: 2 },
-      { q: "有一個資料庫資料表儲存了學校出勤率的相關資訊 (如下表)。<br>StudentName, GradeLevel及DaysAbsent的資料型態為何？", table: t_att, options: ["VARCHAR, INT, DECIMAL", "VARCHAR, DECIMAL, INT", "CHAR, INT, DECIMAL", "BIT, INT, DECIMAL"], answer: 0 },
-      { q: "您刪除了Order資料表中的資料列。OrderItem資料表中的對應資料列也被自動刪除了。", options: ["繼承法刪除", "函式法刪除", "瀑布法刪除", "串聯刪除(Cascade Delete)"], answer: 3 },
-      { q: "公司禁止儲存 SSN。執行 <code>ALTER TABLE Customers REMOVE SSN;</code> 發生錯誤。<br>請問您需要對上述查詢進行哪些變更，才能從Customers資料表中移除SSN資料行？", options: ["REMOVE SSN", "DELETE SSN", "DROP COLUMN SSN", "DELETE COLUMN SSN"], answer: 2 },
-      { q: "請問您應該使用哪一個陳述式來移除外部索引鍵？", options: ["DELETE TABLE", "DELETE FOREIGN KEY", "ALTER FOREIGN KEY", "ALTER TABLE"], answer: 3 },
-      { q: "您有一個名為Customer的資料表。您需要建立一個名為District的新資料行，請問您應該使用哪一個陳述式？", options: ["ALTER TABLE Customer MODIFY (District INTEGER)", "ALTER TABLE Customer ADD (District INTEGER)", "ALTER TABLE Customer ADD District INTEGER", "MODIFY TABLE Customer ADD (INTEGER District)"], answer: 2 },
-      { q: "請問哪一個陳述式會建立複合索引鍵？", options: ["PRIMARY KEY", "PRIMARY KEY(OrderID, OrderItemID)", "PRIMARY KEY OrderID", "以上皆非"], answer: 1 },
-      
-      { q: "您正在建立一個名為Student的資料庫物件來儲存以下資料，請問您應該使用哪一個語法來建立物件？", table: t_stu, options: ["CREATE TABLE Student (ID INT, Name VARCHAR(100), Age INT)", "CREATE TABLE (ID INT, Name VARCHAR(100), Age INT)", "CREATE Student (ID INT, Name VARCHAR(100), Age INT)", "CREATE (TABLE Student ID INT...)"], answer: 0 },
-      { q: "您需要建議公司在資料庫資料表中使用某種資料類型，以便根據收費金額執行財務函式。請問您應該建議使用哪一種資料類型？", options: ["bit", "decimal", "binary", "varchar"], answer: 1 },
-      { q: "另一位開發人員執行 <code>ALTER TABLE Person ADD Prefix varchar(4) NOT NULL;</code> 收到錯誤訊息。<br>請問這個問題的可能原因為何？", options: ["應該使用DEFAULT關鍵字定設值", "Person資料表是空的", "varchar(4)資料類型不適用", "您應該先執行DROP CONSTRAINT"], answer: 0 },
-
-      // 5. Functions
-      { q: "關於SQL Server Management Studio的查詢環境，下列敘述何者正確？", options: ["已註冊的伺服器視窗用來管理常使用的SQL Server", "物件總管視窗內含已連線的資料庫伺服器與物件", "SQL Query視窗主要用來下達SQL指令", "以上皆是"], answer: 3 },
-      { q: "關於SQL Server Management Studio的查詢環境(按鈕)，下列敘述何者正確？", options: ["執行鈕(F5)用於執行SQL", "結果視窗展現執行結果", "訊息視窗顯示錯誤或PRINT結果", "以上皆是"], answer: 3 },
-      { q: "執行SQL語法：SELECT '資料庫系統'，結果為何？", options: ["資料庫系統", "'資料庫系統'", "NULL", "空白"], answer: 0 },
-      { q: "執行SQL語法：SELECT 3+5，結果為何？", options: ["3", "5", "8", "0"], answer: 2 },
-      { q: "執行SQL語法：SELECT ROUND(78.94, 2)，結果為何？", options: ["78.94", "78.95", "78.90", "79.00"], answer: 0 },
-      { q: "執行SQL語法：SELECT ROUND(78.94, 1)，結果為何？", options: ["78.94", "78.95", "78.90", "79.00"], answer: 2 },
-      { q: "執行SQL語法：SELECT ROUND(78.94, 0)，結果為何？", options: ["78.94", "78.95", "78.90", "79.00"], answer: 3 },
-      { q: "執行SQL語法：SELECT ROUND(78.94, -1)，結果為何？", options: ["78.94", "78.95", "79.00", "80.00"], answer: 3 },
-      { q: "執行SQL語法：SELECT CEILING(89.3)，結果為何？", options: ["89.3", "89.4", "89.0", "90.0"], answer: 3 },
-      { q: "執行SQL語法：SELECT SQRT(25)，結果為何？", options: ["0", "5", "25", "625"], answer: 1 },
-      { q: "執行SQL語法：SELECT SQUARE(4)，結果為何？", options: ["0", "2", "4", "16"], answer: 3 },
-      { q: "執行SQL語法：SELECT ABS(-25)，結果為何？", options: ["-25", "-5", "5", "25"], answer: 3 },
-      { q: "如果要使用SQL語法做資料型態轉換，可以使用下列哪個函數來完成 (CAST)？", options: ["CAST", "SORT", "ROUND", "ABS"], answer: 0 },
-      { q: "如果要使用SQL語法做資料型態轉換，可以使用下列哪個函數來完成 (CONVERT)？", options: ["SQUARE", "CONVERT", "CEILING", "FLOOR"], answer: 1 },
-      { q: "執行SQL語法：SELECT DATEPART(year, '2019-3-20')，結果為何？", options: ["2019", "1", "3", "20"], answer: 0 },
-      { q: "執行SQL語法：SELECT DATEPART(quarter, '2019-3-20')，結果為何？", options: ["2019", "1", "3", "20"], answer: 1 },
-      { q: "執行SQL語法：SELECT DATEPART(month, '2019-3-20')，結果為何？", options: ["2019", "1", "3", "20"], answer: 2 },
-      { q: "執行SQL語法：SELECT DATEPART(day, '2019-3-20')，結果為何？", options: ["4", "1", "3", "20"], answer: 3 },
-      { q: "執行SQL語法：SELECT DATEPART(weekday, '2019-3-20')，結果為何？", options: ["4", "1", "3", "20"], answer: 0 },
-      { q: "執行SQL語法：SELECT DATEADD(quarter, 1, '2018-01-31')，結果為何？", options: ["2019-01-31", "2018-02-28", "2018-04-30", "2017-10-31"], answer: 2 },
-      { q: "執行SQL語法：SELECT DATEADD(year, 1, '2018-01-31')，結果為何？", options: ["2019-01-31", "2018-02-28", "2018-04-30", "2017-10-31"], answer: 0 },
-      { q: "執行SQL語法：SELECT DATEADD(month, -3, '2018-01-31')，結果為何？", options: ["2019-01-31", "2018-02-28", "2018-04-30", "2017-10-31"], answer: 3 },
-      { q: "執行SQL語法：SELECT DATEADD(month, 1, '2018-01-31')，結果為何？", options: ["2019-01-31", "2018-02-28", "2018-04-30", "2017-10-31"], answer: 1 },
-      { q: "執行SQL語法：SELECT DATEDIFF(mm, '2018/01/01', '2019/05/05')，結果為何？", options: ["1", "5", "16", "19"], answer: 2 },
-      { q: "執行SQL語法：SELECT DATEDIFF(yy, '2019/12/05', '2017/01/01')，結果為何？", options: ["1", "-2", "16", "19"], answer: 1 },
-      { q: "執行SQL語法：SELECT DATEDIFF(dd, '2019/01/01', '2019/01/20')，結果為何？", options: ["1", "5", "16", "19"], answer: 3 },
-      { q: "執行SQL語法：SELECT DATEDIFF(qq, '2018/01/01', '2019/05/05')，結果為何？", options: ["1", "5", "16", "19"], answer: 1 },
-      { q: "執行SQL語法：SELECT DATEDIFF(yy, '2018/12/05', '2019/01/01')，結果為何？", options: ["1", "-2", "16", "19"], answer: 0 },
-      { q: "執行SQL語法：SELECT UPPER('AbCdE')，結果為何？", options: ["abcde", "ABCDE", "AbCdE", "aBcDe"], answer: 1 },
-      { q: "執行SQL語法：SELECT LOWER('AbCdE')，結果為何？", options: ["abcde", "ABCDE", "AbCdE", "aBcDe"], answer: 0 },
-      { q: "執行SQL語法：SELECT LEN('chihlee')，結果為何？", options: ["6", "7", "8", "9"], answer: 1 },
-      { q: "執行SQL語法：SELECT LEN('致*理*科*技*大*學')，結果為何？", options: ["6", "8", "11", "13"], answer: 2 },
-      { q: "執行SQL語法：SELECT CHARINDEX('致理','致理科技大學:致理人,自己人')，結果為何？", options: ["0", "1", "2", "14"], answer: 1 },
-      { q: "執行SQL語法：SELECT CHARINDEX('致理','致理科技大學:致理人,自己人',4)，結果為何？", options: ["0", "1", "8", "14"], answer: 2 },
-      { q: "執行SQL語法：SELECT LEFT('CHIHLEE', 3)，結果為何？", options: ["CHI", "HLE", "LEE", "CHIHLEE"], answer: 0 },
-      { q: "執行SQL語法：SELECT REPLICATE('*', 4)，結果為何？", options: ["***", "****", "*****", "******"], answer: 1 },
-
-      // 6. SELECT Queries (Employee Table)
-      { q: "下圖為 [員工] 資料表的資料結構，請問若是要顯示所有 [員工] 資料表的內容，下列語法何者正確？", table: t_emp, options: ["SELECT 員工編號,姓名... FROM 員工", "SELECT * FROM 員工", "SELECT FROM 員工 WHERE (性別='男')", "SELECT * FROM 員工 WHERE (性別='女')"], answer: 1 },
-      { q: "下圖為 [員工] 資料表的資料結構，請問若是要顯示性別為男生的員工資料，下列語法何者正確？", table: t_emp, options: ["SELECT 員工編號... FROM 員工", "SELECT * FROM 員工", "SELECT * FROM 員工 WHERE (性別='男')", "SELECT * FROM 員工 WHERE (性別='女')"], answer: 2 },
-      { q: "下圖為 [員工] 資料表的資料結構，請問若是要顯示所有員工的員工編號、姓名跟職稱的內容，下列語法何者正確？", table: t_emp, options: ["SELECT 員工編號,姓名,職稱 FROM 員工", "SELECT * FROM 員工", "SELECT FROM 員工 WHERE (性別='男')", "SELECT * FROM 員工 WHERE (性別='女')"], answer: 0 },
-      { q: "下圖為 [員工] 資料表的資料結構，請問若是要顯示所有 [員工] 資料表的內容，且排序要以員工編號遞減排序，下列語法何者正確？", table: t_emp, options: ["SELECT * FROM 員工", "SELECT FROM 員工 order by 員工編號", "SELECT FROM 員工 order by 員工編號 ASC", "SELECT * FROM 員工 order by 員工編號 DESC"], answer: 3 },
-      { q: "下圖為 [員工] 資料表的資料結構，請問若是要查詢男工程師和女業務的基本資料，下列語法何者正確？", table: t_emp, options: ["WHERE (性別='男' AND 職稱='工程師') OR (性別='女' AND 職稱='業務')", "WHERE (性別='男' AND 職稱='業務') OR (性別='女' AND 職稱='工程師')", "WHERE (性別='男' OR 職稱='工程師') OR (性別='女' OR 職稱='業務')", "WHERE (性別='男' OR 職稱='工程師') AND (性別='女' OR 職稱='業務')"], answer: 0 },
-      { q: "下圖為 [員工] 資料表的資料結構，請列出所有員工資料，並依據職稱與員工編號多個資料行的排序，其中『職稱』遞減排序，『員工編號』遞增排序，下列語法何者正確？", table: t_emp, options: ["ORDER BY 職稱 ASC, 員工編號 DESC", "ORDER BY 職稱 DESC, 員工編號 ASC", "ORDER BY 員工編號 ASC, 職稱 DESC", "ORDER BY 員工編號 DESC, 職稱 ASC"], answer: 1 },
-      
-      // 7. SELECT & Cars Table
-      { q: "SQL DML語法中，針對原始資料的條件篩選，如對內部合併(或其他合併)後的結果進行條件篩選，要使用哪個子句？", options: ["WHERE", "ORDER BY", "HAVING", "GROUP BY"], answer: 0 },
-      { q: "關於SELECT語法與語意的敘述，下列何者正確？(WHERE相關)", options: ["SELECT子句主要是針對運算式的輸出", "FROM後面接資料表", "WHERE後面主要是原始資料的條件篩選", "以上皆是"], answer: 3 },
-      { q: "關於SELECT語法與語意的敘述，下列何者正確？(排序與群組)", options: ["GROUP BY是針對一些資料行當成分群的依據", "HAVING條件篩選是針對於彙總後的資料進行篩選", "ORDER BY是當資料處理完成後要將資料進行排序時使用", "以上皆是"], answer: 3 },
-      { q: "下列哪個關鍵字可避免在查詢結果的欄位值中，沒有重複的值？", options: ["ONLY", "UNIQUE", "NOT SAME", "DISTINCT"], answer: 3 },
-      { q: "您需要列出每個產品的名稱和價格，按最高到最低價格排序。您應該使用哪一個陳述式？", options: ["SELECT Name, TOP Price...", "SELECT Name, BOTTOM Price...", "ORDER BY Price ASC", "SELECT Name, Price FROM Product ORDER BY Price DESC"], answer: 3 },
-      { q: "關於SQL DML語法中，資料表別名的敘述，下列何者正確？", options: ["為了減少程式撰寫麻煩可給別名", "在資料表後面加上AS別名即可", "一旦給定別名後SELECT中都必須使用該別名", "以上皆是"], answer: 3 },
-      { q: "有一個名為 Cars 的資料庫資料表 (如下表)。<br>SQL: <code>SELECT * FROM Cars C WHERE c.Origin <> 'USA' AND c.Color <> 'Black'</code><br>請問此SQL陳述式會傳回多少個資料列？", table: t_car, options: ["4", "5", "6", "7"], answer: 0 },
-      { q: "請問哪一個查詢會傳回除了加州(CA)以外，其他所有州在2017年1月之後提交訂單的結果集？", options: ["WHERE order_date > '2017-01-01' OR ship_state <> 'CA'", "WHERE order_date > '2017-01-01' AND ship_state <> 'CA'", "WHERE ... AND ship_state LIKE 'CA'", "WHERE ... ship_state LIKE 'CA'"], answer: 1 }
-    ];
-
-    // --- 系統邏輯 (核心功能) ---
-    let currentQuestions = [];
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let isAnswered = false;
-
-    // 取得 HTML 元素
-    const startScreen = document.getElementById('start-screen');
-    const quizScreen = document.getElementById('quiz-screen');
-    const resultScreen = document.getElementById('result-screen');
-    const questionText = document.getElementById('question-text');
-    const optionsContainer = document.getElementById('options-container');
     const tableDisplay = document.getElementById('table-display');
-    const nextBtn = document.getElementById('next-btn');
-    const progressText = document.getElementById('progress-text');
-    const scoreText = document.getElementById('score-text');
-    const finalScore = document.getElementById('final-score');
-    const feedbackMsg = document.getElementById('feedback-msg');
+    if (q.table) {
+        tableDisplay.innerHTML = q.table;
+        tableDisplay.classList.remove('hide');
+    } else {
+        tableDisplay.classList.add('hide');
+    }
 
-    // 啟動測驗
-    function startQuiz(amount) {
-        // 隨機打亂題目
-        const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
-        
-        // 設定題數
-        if (amount === 'all') {
-            currentQuestions = shuffled;
-        } else {
-            currentQuestions = shuffled.slice(0, Math.min(amount, shuffled.length));
-        }
+    optionsContainer.innerHTML = '';
+    q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.innerHTML = `<span style="opacity:0.5; margin-right:10px;">[ ${String.fromCharCode(65+index)} ]</span> ${opt}`;
+        btn.classList.add('btn', 'btn-option');
+        btn.onclick = () => checkAnswer(index, btn);
+        optionsContainer.appendChild(btn);
+    });
+}
 
-        currentQuestionIndex = 0;
-        score = 0;
-        isAnswered = false;
+function checkAnswer(selectedIndex, selectedBtn) {
+    if (isAnswered) return;
+    isAnswered = true;
 
-        // 切換畫面
-        startScreen.classList.add('hide');
-        quizScreen.classList.remove('hide');
-        
+    const q = currentQuestions[currentQuestionIndex];
+    const correctIndex = q.answer;
+    const allBtns = optionsContainer.children;
+
+    if (selectedIndex === correctIndex) {
+        score++;
+        selectedBtn.classList.add('correct');
+    } else {
+        selectedBtn.classList.add('wrong');
+        allBtns[correctIndex].classList.add('correct');
+    }
+
+    expContent.innerHTML = q.explanation || "該題暫無詳細解析。";
+    expBox.style.display = 'block';
+
+    for (let btn of allBtns) { btn.disabled = true; }
+    nextBtn.style.display = 'block';
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < currentQuestions.length) {
         loadQuestion();
+    } else {
+        showResults();
     }
+}
 
-    // 載入當前題目
-    function loadQuestion() {
-        isAnswered = false;
-        nextBtn.style.display = 'none';
-        
-        const q = currentQuestions[currentQuestionIndex];
-        
-        // 更新狀態列 (中文)
-        progressText.innerText = `進度：${currentQuestionIndex + 1} / ${currentQuestions.length}`;
-        scoreText.innerText = `得分：${score}`;
-        
-        questionText.innerHTML = q.q;
-
-        // 處理表格顯示
-        if (q.table) {
-            tableDisplay.innerHTML = q.table;
-            tableDisplay.classList.remove('hide');
-        } else {
-            tableDisplay.innerHTML = '';
-            tableDisplay.classList.add('hide');
-        }
-
-        // 產生選項
-        optionsContainer.innerHTML = '';
-        q.options.forEach((opt, index) => {
-            const btn = document.createElement('button');
-            // 選項前加上 A, B, C, D 標籤裝飾
-            btn.innerHTML = `<span style="opacity:0.5; margin-right:10px;">[ ${String.fromCharCode(65+index)} ]</span> ${opt}`;
-            btn.classList.add('btn', 'btn-option');
-            btn.onclick = () => checkAnswer(index, btn);
-            optionsContainer.appendChild(btn);
-        });
-    }
-
-    // 檢查答案
-    function checkAnswer(selectedIndex, selectedBtn) {
-        if (isAnswered) return;
-        isAnswered = true;
-
-        const correctIndex = currentQuestions[currentQuestionIndex].answer;
-        const allBtns = optionsContainer.children;
-
-        if (selectedIndex === correctIndex) {
-            score++;
-            scoreText.innerText = `得分：${score}`;
-            selectedBtn.classList.add('correct');
-        } else {
-            selectedBtn.classList.add('wrong');
-            // 標示正確答案
-            allBtns[correctIndex].classList.add('correct');
-        }
-
-        // 鎖定所有按鈕
-        for (let btn of allBtns) {
-            btn.disabled = true;
-            btn.style.cursor = 'default';
-        }
-        
-        nextBtn.style.display = 'inline-block';
-    }
-
-    // 下一題
-    function nextQuestion() {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < currentQuestions.length) {
-            loadQuestion();
-        } else {
-            showResults();
-        }
-    }
-
-    // 顯示結果
-    function showResults() {
-        quizScreen.classList.add('hide');
-        resultScreen.classList.remove('hide');
-        
-        const percentage = Math.round((score / currentQuestions.length) * 100);
-        finalScore.innerText = `${score} / ${currentQuestions.length} (${percentage}%)`;
-        
-        if (percentage >= 60) {
-            feedbackMsg.innerHTML = "<span style='color:var(--neon-green)'>任務成功 // 恭喜及格</span>";
-        } else {
-            feedbackMsg.innerHTML = "<span style='color:var(--alert-red)'>任務失敗 // 需再練習</span>";
-        }
-    }
+function showResults() {
+    quizScreen.classList.add('hide');
+    document.getElementById('result-screen').classList.remove('hide');
+    const percentage = Math.round((score / currentQuestions.length) * 100);
+    document.getElementById('final-score').innerText = percentage + "%";
+    document.getElementById('feedback-msg').innerText = percentage >= 60 ? "任務成功 // 通過認證" : "任務失敗 // 權限不足";
+}
 </script>
 
 </body>

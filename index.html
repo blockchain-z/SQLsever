@@ -637,10 +637,11 @@ const questionBank = [
     },
     {
         id: 27,
-        q: "您正在開發一個SQL陳述式以建立資料表。請問哪兩個SQL關鍵字用於CREATE TABLE陳述式？(請選擇2個答案。)", 
-    options: ["INSERT INTO", "ORDER BY", "PRIMARY KEY", "CONSTRAINT"], 
-    ans: [2, 3], 
-        expl: "PRIMARY KEY 與 CONSTRAINT 是定義資料表結構與限制的關鍵字。"},
+        q: "CREATE TABLE 陳述式中會用到哪兩個關鍵字？(複選題情境)",
+        options: ["INSERT INTO", "ORDER BY", "PRIMARY KEY", "CONSTRAINT"],
+        ans: 3, 
+        expl: "PRIMARY KEY 與 CONSTRAINT 是定義資料表結構與限制的關鍵字。(註：系統設為單選，此題選最具代表性的 CONSTRAINT 或 PK 皆可，這裡設定答案為 CONSTRAINT 代表結構定義)"
+    },
     {
         id: 28,
         q: "刪除資料庫資料表應使用哪一個 DDL 關鍵字？",

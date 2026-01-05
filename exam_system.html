@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科技風格測驗系統 - 歷史成績與試題</title>
+    <style>
+        /* === 全局變數設定 (方便改色) === */
+        :root {
+            --bg-color: #050a14;        /* 深藍黑背景 */
+            --card-bg: rgba(11, 16, 33, 0.95);
+            --primary-color: #00f3ff;   /* 科技青 (Cyan) */
+            --secondary-color: #00ff41; /* 數據綠 */
+            --text-main: #e0f7fa;       /* 亮白文字 */
+            --text-dim: #7da0a6;        /* 暗色文字 */
+            --border-glow: 0 0 8px rgba(0, 243, 255, 0.3);
+            --font-tech: 'Consolas', 'Monaco', 'Courier New', monospace; /* 等寬字體 */
+        }
+
+        /* === 基礎重置 === */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: "微軟正黑體", sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            /* 背景網格線裝飾 */
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        /* === 容器樣式 === */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* === 標題區 === */
+        header {
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        h1 {
+            font-family: var(--font-tech);
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px var(--primary-color);
+        }
+
+        .system-status {
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+        }
+
+        /* === 試題卡片設計 === */
+        .exam-card {
+            background: var(--card-bg);
+            border: 1px solid var(--primary-color);
+            border-left: 5px solid var(--primary-color); /* 左側加粗裝飾 */
+            margin-bottom: 30px;
+            padding: 25px;
+            box-shadow: var(--border-glow);
+            position: relative;
+        }
+
+        /* 題目編號與標籤 */
+        .q-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-family: var(--font-tech);
+        }
+
+        .q-id {
+            background: var(--primary-color);
+            color: #000;
+            font-weight: bold;
+            padding: 2px 8px;
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+
+        .q-score {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        /* 題目文字 */
+        .q-text {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        /* === 核心功能：嵌入式資料表 (Tech Schema Table) === */
+        /* 當題目沒有表格時，整個 .schema-panel 區塊不會被渲染，版面會自動貼合 */
+        .schema-panel {
+            margin: 20px 0;
+            border: 1px dashed rgba(0, 243, 255, 0.4);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+        }
+
+        .schema-title {
+            font-family: var(--font-tech);
+            font-size: 0.85rem;
+            color: var(--primary-color);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .tech-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-tech);
+            font-size: 0.9rem;
+        }
+
+        .tech-table th {
+            text-align: left;
+            padding: 8px;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--primary-color);
+        }
+
+        .tech-table td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tech-table tr:hover td {
+            background-color: rgba(0, 243, 255, 0.1);
+            color: #fff;
+        }
+
+        /* 資料類型顏色高亮 (模擬程式碼編輯器) */
+        .type-int { color: #bd93f9; }     /* 紫色 */
+        .type-varchar { color: #ff79c6; } /* 粉色 */
+        .type-date { color: #50fa7b; }    /* 綠色 */
+        .key-icon { color: #f1fa8c; margin-right: 5px; } /* 黃色鑰匙 */
+
+        /* === 選項樣式 === */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-color);
+            background: rgba(0, 243, 255, 0.05);
+        }
+
+        /* 隱藏原生 Radio Button */
+        input[type="radio"] {
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border: 1px solid var(--text-dim);
+            border-radius: 50%;
+            margin-right: 15px;
+            display: grid;
+            place-content: center;
+        }
+
+        input[type="radio"]::before {
+            content: "";
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: 0.2s transform;
+            background: var(--primary-color);
+        }
+
+        input[type="radio"]:checked {
+            border-color: var(--primary-color);
+        }
+
+        input[type="radio"]:checked::before {
+            transform: scale(1);
+        }
+
+        .opt-code {
+            font-family: var(--font-tech);
+            color: #fff;
+        }
+
+        /* === 按鈕 === */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 40px;
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            font-family: var(--font-tech);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary-color);
+            color: #000;
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>System Analysis <span style="font-size:0.6em; vertical-align: middle;">FINAL_EXAM</span></h1>
+        <div class="system-status">USER: 61310115 // CLASS: 夜資二A</div>
+    </header>
+
+    <div class="exam-card">
+        <div class="q-header">
+            <span class="q-id">Q_04</span>
+            <span class="q-score">[配分: 1.66]</span>
+        </div>
+        
+        <p class="q-text">
+            下圖為 [員工] 資料表的資料結構，請問若是要顯示所有 [員工] 資料表的內容，且排序要以員工編號遞減排序，下列語法何者正確？
+        </p>
+
+        <div class="schema-panel">
+            <div class="schema-title">>> SCHEMA_VIEW: EMPLOYEE_TABLE</div>
+            <table class="tech-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">資料行名稱 (COLUMN)</th>
+                        <th>資料類型 (TYPE)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="key-icon">🔑</span>員工編號</td>
+                        <td class="type-int">int</td>
+                    </tr>
+                    <tr>
+                        <td>姓名</td>
+                        <td class="type-varchar">varchar(20)</td>
+                    </tr>
+                    <tr>
+                        <td>職稱</td>
+                        <td class="type-varchar">varchar(20)</td>
+                    </tr>
+                    <tr>
+                        <td>性別</td>
+                        <td class="type-varchar">varchar(2)</td>
+                    </tr>
+                    <tr>
+                        <td>主管</td>
+                        <td class="type-int">int</td>
+                    </tr>
+                    <tr>
+                        <td>出生日期</td>
+                        <td class="type-date">date</td>
+                    </tr>
+                    <tr>
+                        <td>任用日期</td>
+                        <td class="type-date">date</td>
+                    </tr>
+                    <tr>
+                        <td>區域號碼</td>
+                        <td class="type-varchar">varchar(10)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="options-list">
+            <label class="option-item">
+                <input type="radio" name="q4">
+                <span class="opt-code">A. SELECT * FROM 員工</span>
+            </label>
+            <label class="option-item">
+                <input type="radio" name="q4">
+                <span class="opt-code">B. SELECT * FROM 員工 ORDER BY 員工編號</span>
+            </label>
+            <label class="option-item">
+                <input type="radio" name="q4">
+                <span class="opt-code">C. SELECT * FROM 員工 ORDER BY 員工編號 ASC</span>
+            </label>
+            <label class="option-item">
+                <input type="radio" name="q4">
+                <span class="opt-code">D. SELECT * FROM 員工 ORDER BY 員工編號 DESC</span>
+            </label>
+        </div>
+    </div>
+
+    <div class="exam-card">
+        <div class="q-header">
+            <span class="q-id">Q_05</span>
+            <span class="q-score">[配分: 5.00]</span>
+        </div>
+        
+        <p class="q-text">
+            如果想利用 SQL DDL 語法建立一個名稱為 Chihlee 的資料表，下列語法何者正確？
+        </p>
+
+        <div class="options-list">
+            <label class="option-item">
+                <input type="radio" name="q5">
+                <span class="opt-code">A. CREATE TABLE Chihlee (...)</span>
+            </label>
+            <label class="option-item">
+                <input type="radio" name="q5">
+                <span class="opt-code">B. ALTER DATABASE Chihlee (...)</span>
+            </label>
+            <label class="option-item">
+                <input type="radio" name="q5">
+                <span class="opt-code">C. DROP DATABASE Chihlee (...)</span>
+            </label>
+            <label class="option-item">
+                <input type="radio" name="q5">
+                <span class="opt-code">D. CREATE DATABASE Chihlee (...)</span>
+            </label>
+        </div>
+    </div>
+
+    <button class="submit-btn">UPLOAD_ANSWERS //</button>
+</div>
+
+</body>
+</html>

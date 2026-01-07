@@ -453,7 +453,7 @@
 </div>
 
 <script>
-// --- 題目資料庫 (Parsed from PDF) ---
+// --- 題目資料庫 (修正語法錯誤) ---
 const questionBank = [
     {
         id: 1,
@@ -867,119 +867,119 @@ const questionBank = [
         q: "SELECT DATEADD(year, 1, '2018-01-31') 結果為何？",
         options: ["2019-01-31", "2018-02-28", "2018-04-30", "2017..."],
         ans: 0,
-        expl: "DATEADD 將指定單位(year)加 1，年份變 2019。 [cite: 511]"
+        expl: "DATEADD 將指定單位(year)加 1，年份變 2019。"
     },
     {
         id: 60,
         q: "SELECT DATEADD(month, -3, '2018-01-31') 結果為何？",
         options: ["2019...", "2018-02-28", "2018-04-30", "2017-10-31"],
         ans: 3,
-        expl: "1月倒退3個月是前一年的10月。10月有31天，故為 2017-10-31。 [cite: 528]"
+        expl: "1月倒退3個月是前一年的10月。10月有31天，故為 2017-10-31。"
     },
     {
         id: 61,
         q: "SELECT DATEADD(month, 1, '2018-01-31') 結果為何？",
         options: ["2019...", "2018-02-28", "2018-04-30", "2017..."],
         ans: 1,
-        expl: "1月加1個月是2月。2018是平年，2月只有28天，故自動調整為 2018-02-28。 [cite: 535]"
+        expl: "1月加1個月是2月。2018是平年，2月只有28天，故自動調整為 2018-02-28。"
     },
     {
         id: 62,
         q: "SELECT DATEDIFF(mm, '2018/01/01', '2019/05/05') 結果為何？",
         options: ["1", "5", "16", "19"],
         ans: 2,
-        expl: "DATEDIFF 計算月數差(mm)。2018整年(12) + 2019前5個月(4個月距)，約16個月。 [cite: 545]"
+        expl: "DATEDIFF 計算月數差(mm)。2018整年(12) + 2019前5個月(4個月距)，約16個月。"
     },
     {
         id: 63,
         q: "SELECT DATEDIFF(yy, '2019/12/05', '2017/01/01') 結果為何？",
         options: ["1", "-2", "16", "19"],
         ans: 1,
-        expl: "結束日期小於開始日期，結果為負數。2017 - 2019 = -2。 [cite: 551]"
+        expl: "結束日期小於開始日期，結果為負數。2017 - 2019 = -2。"
     },
     {
         id: 64,
         q: "SELECT DATEDIFF(dd, '2019/01/01', '2019/01/20') 結果為何？",
         options: ["1", "5", "16", "19"],
         ans: 3,
-        expl: "計算日數差 (dd)。20 - 1 = 19 天。 [cite: 561]"
+        expl: "計算日數差 (dd)。20 - 1 = 19 天。"
     },
     {
         id: 65,
         q: "SELECT UPPER('AbCdE') 結果為何？",
         options: ["abcde", "ABCDE", "AbCdE", "aBcDe"],
         ans: 1,
-        expl: "UPPER 將字串轉為全大寫。 [cite: 580]"
+        expl: "UPPER 將字串轉為全大寫。"
     },
     {
         id: 66,
         q: "SELECT LOWER('AbCdE') 結果為何？",
         options: ["abcde", "ABCDE", "AbCdE", "aBcDe"],
         ans: 0,
-        expl: "LOWER 將字串轉為全小寫。 [cite: 587]"
+        expl: "LOWER 將字串轉為全小寫。"
     },
     {
         id: 67,
         q: "SELECT LEN('chihlee') 結果為何？",
         options: ["6", "7", "8", "9"],
         ans: 1,
-        expl: "LEN 計算字串長度，chihlee 共 7 個字元。 [cite: 597]"
+        expl: "LEN 計算字串長度，chihlee 共 7 個字元。"
     },
     {
         id: 68,
         q: "SELECT LEN('致*理*科*技*大*學') 結果為何？",
         options: ["6", "8", "11", "13"],
         ans: 2,
-        expl: "6個中文字 + 5個星號 = 11 個字元。 [cite: 605]"
+        expl: "6個中文字 + 5個星號 = 11 個字元。"
     },
     {
         id: 69,
         q: "SELECT CHARINDEX('致理', '致理科技大學:致理人,自己人') 結果為何？",
         options: ["0", "1", "2", "14"],
         ans: 1,
-        expl: "CHARINDEX 回傳搜尋字串「第一次」出現的位置，從第 1 個字開始。 [cite: 611]"
+        expl: "CHARINDEX 回傳搜尋字串「第一次」出現的位置，從第 1 個字開始。"
     },
     {
         id: 70,
         q: "SELECT CHARINDEX('致理', '致理科技大學:致理人,自己人', 4) 結果為何？",
         options: ["0", "1", "8", "14"],
         ans: 2,
-        expl: "指定從第 4 個字開始找。第二次出現的「致理」位於第 8 個位置 (冒號後)。 [cite: 619]"
+        expl: "指定從第 4 個字開始找。第二次出現的「致理」位於第 8 個位置 (冒號後)。"
     },
     {
         id: 71,
         q: "SELECT LEFT('CHIHLEE', 3) 結果為何？",
         options: ["CHI", "HLE", "LEE", "CHIHLEE"],
         ans: 0,
-        expl: "LEFT 取左邊算起 3 個字元。 [cite: 624]"
+        expl: "LEFT 取左邊算起 3 個字元。"
     },
     {
         id: 72,
         q: "SELECT RIGHT('CHIHLEE', 3) 結果為何？",
         options: ["CHI", "HLE", "LEE", "CHIHLEE"],
         ans: 2,
-        expl: "RIGHT 取右邊算起 3 個字元 (LEE)。 [cite: 636]"
+        expl: "RIGHT 取右邊算起 3 個字元 (LEE)。"
     },
     {
         id: 73,
         q: "SELECT SUBSTRING('chihlee', 2, 3) 結果為何？",
         options: ["chi", "hih", "ihl", "lee"],
         ans: 1,
-        expl: "從第 2 個字開始，取 3 個字。h, i, h -> hih。 [cite: 642]"
+        expl: "從第 2 個字開始，取 3 個字。h, i, h -> hih。"
     },
     {
         id: 74,
         q: "SELECT SUBSTRING('一二三四五六日', 4, 1) 結果為何？",
         options: ["四", "五", "一二三四", "四五六日"],
         ans: 0,
-        expl: "從第 4 個字開始取 1 個字，即「四」。 [cite: 646]"
+        expl: "從第 4 個字開始取 1 個字，即「四」。"
     },
     {
         id: 75,
         q: "SELECT REPLICATE('*', 4) 結果為何？",
         options: ["***", "****", "*****", "******"],
         ans: 1,
-        expl: "REPLICATE 會重複字串指定次數。4 個星號。 [cite: 654]"
+        expl: "REPLICATE 會重複字串指定次數。4 個星號。"
     },
 
     // === 第四部分：DML 查詢與邏輯 (Page 12-14) ===
@@ -988,100 +988,100 @@ const questionBank = [
         q: "若要顯示所有[員工]資料表的內容，下列語法何者正確？",
         options: ["SELECT 員工編號... FROM 員工", "SELECT * FROM 員工", "SELECT FROM 員工 WHERE...", "SELECT * FROM 員工 WHERE..."],
         ans: 1,
-        expl: "SELECT * FROM [Table] 代表選取所有欄位與所有資料。 [cite: 682]"
+        expl: "SELECT * FROM [Table] 代表選取所有欄位與所有資料。"
     },
     {
         id: 77,
         q: "若要顯示「性別為男」的員工資料，語法何者正確？",
         options: ["SELECT ... FROM 員工", "SELECT * FROM 員工", "SELECT * FROM 員工 WHERE (性別='男')", "SELECT ... WHERE (性別='女')"],
         ans: 2,
-        expl: "使用 WHERE 子句進行條件篩選。 [cite: 712]"
+        expl: "使用 WHERE 子句進行條件篩選。"
     },
     {
         id: 78,
         q: "若只要顯示「員工編號, 姓名, 職稱」三個欄位，語法何者正確？",
         options: ["SELECT 員工編號,姓名,職稱 FROM 員工", "SELECT * FROM 員工", "SELECT FROM 員工...", "SELECT ... WHERE ..."],
         ans: 0,
-        expl: "在 SELECT 後方明確列出所需欄位名稱，而非使用 *。 [cite: 743]"
+        expl: "在 SELECT 後方明確列出所需欄位名稱，而非使用 *。"
     },
     {
         id: 79,
         q: "若要顯示所有員工，且依據「員工編號」遞減排序 (DESC)，語法何者正確？",
         options: ["SELECT * FROM 員工", "ORDER BY 員工編號", "ORDER BY 員工編號 ASC", "ORDER BY 員工編號 DESC"],
         ans: 3,
-        expl: "遞減排序使用關鍵字 DESC (Descending)。 [cite: 775]"
+        expl: "遞減排序使用關鍵字 DESC (Descending)。"
     },
     {
         id: 80,
         q: "查詢「(男工程師) 或 (女業務)」的資料，條件語法何者正確？",
         options: ["(男 AND 工程師) OR (女 AND 業務)", "(男 AND 業務) OR (女 AND 工程師)", "(男 OR 工程師) OR ...", "(男 OR 工程師) AND ..."],
         ans: 0,
-        expl: "邏輯需求為：(性別='男' AND 職稱='工程師') OR (性別='女' AND 職稱='業務')。 [cite: 803]"
+        expl: "邏輯需求為：(性別='男' AND 職稱='工程師') OR (性別='女' AND 職稱='業務')。"
     },
     {
         id: 81,
         q: "依據「職稱」遞減排序、「員工編號」遞增排序，語法何者正確？",
         options: ["ORDER BY 職稱 ASC, 員工編號 DESC", "ORDER BY 職稱 DESC, 員工編號 ASC", "ORDER BY 員工編號 ASC, 職稱 DESC", "ORDER BY..."],
         ans: 1,
-        expl: "多欄位排序以逗號分隔。職稱 DESC (遞減), 員工編號 ASC (遞增/預設)。 [cite: 830]"
+        expl: "多欄位排序以逗號分隔。職稱 DESC (遞減), 員工編號 ASC (遞增/預設)。"
     },
     {
         id: 82,
         q: "針對「群組彙總後 (如 SUM/COUNT)」的結果進行篩選，要使用哪個子句？",
         options: ["WHERE", "ORDER BY", "HAVING", "GROUP BY"],
         ans: 2,
-        expl: "WHERE 用於原始資料篩選；HAVING 用於 GROUP BY 之後的聚合結果篩選。 [cite: 836]"
+        expl: "WHERE 用於原始資料篩選；HAVING 用於 GROUP BY 之後的聚合結果篩選。"
     },
     {
         id: 83,
         q: "關於 SELECT 語法，下列何者正確？",
         options: ["SELECT 負責輸出", "FROM 接資料表與 JOIN", "WHERE 負責原始資料篩選", "以上皆是"],
         ans: 3,
-        expl: "SELECT 語句的各個子句 (SELECT, FROM, WHERE) 都有明確職責。 [cite: 845]"
+        expl: "SELECT 語句的各個子句 (SELECT, FROM, WHERE) 都有明確職責。"
     },
     {
         id: 84,
         q: "關於 GROUP BY 與 ORDER BY，下列何者正確？",
         options: ["GROUP BY 用於分群彙總", "HAVING 用於彙總篩選", "ORDER BY 用於排序", "以上皆是"],
         ans: 3,
-        expl: "GROUP BY, HAVING, ORDER BY 是 SQL 資料整理的三大支柱。 [cite: 852]"
+        expl: "GROUP BY, HAVING, ORDER BY 是 SQL 資料整理的三大支柱。"
     },
     {
         id: 85,
         q: "下列哪個關鍵字可避免在查詢結果中出現重複的值？",
         options: ["ONLY", "UNIQUE", "NOT SAME", "DISTINCT"],
         ans: 3,
-        expl: "SELECT DISTINCT 用於過濾重複的資料列。 [cite: 860]"
+        expl: "SELECT DISTINCT 用於過濾重複的資料列。"
     },
     {
         id: 86,
         q: "列出產品名稱和價格，按價格「最高到最低」排序？",
         options: ["SELECT ... TOP Price", "SELECT ... BOTTOM Price", "ORDER BY Price ASC", "ORDER BY Price DESC"],
         ans: 3,
-        expl: "最高到最低即為遞減排序 (DESC)。 [cite: 870]"
+        expl: "最高到最低即為遞減排序 (DESC)。"
     },
     {
         id: 87,
         q: "關於資料表別名 (Alias) 的敘述，何者正確？",
         options: ["可減少程式撰寫麻煩", "使用 AS 別名，AS 可省略", "一旦給定別名，查詢中須使用別名", "以上皆是"],
         ans: 3,
-        expl: "別名 (Alias) 定義後，該查詢語句中必須統一使用別名來參照欄位。 [cite: 876]"
+        expl: "別名 (Alias) 定義後，該查詢語句中必須統一使用別名來參照欄位。"
     },
     {
         id: 88,
         q: "Cars 資料表查詢：Origin <> 'USA' AND Color <> 'Black'，會傳回幾筆資料？(邏輯題)",
         options: ["4", "5", "6", "7"],
         ans: 0,
-        expl: "扣除 USA (Truck, Convertible) 和 Black (Compact, Hybrid) 的車輛後，剩下 4 筆。 [cite: 908]"
+        expl: "扣除 USA (Truck, Convertible) 和 Black (Compact, Hybrid) 的車輛後，剩下 4 筆。"
     },
     {
         id: 89,
         q: "查詢 2017-01-01 之後且「不是」加州 (CA) 的訂單？",
         options: ["OR ship_state <> 'CA'", "AND ship_state <> 'CA'", "AND ship_state LIKE 'CA'", "OR LIKE..."],
         ans: 1,
-        expl: "同時滿足兩個條件需使用 AND，且「不等於」運算子為 <>。 [cite: 919]"
-    }
-    // === 補強遺漏題目：Page 6-7 & Page 8 ===
+        expl: "同時滿足兩個條件需使用 AND，且「不等於」運算子為 <>。"
+    },
+    // === 補強遺漏題目：Page 6-7 & Page 8 (修正後) ===
     {
         id: 90,
         q: "您正在建立一個名為 Student 的資料庫物件來儲存以下資料：ID(INT), Name(VARCHAR), Age(INT)。請問您應該使用哪一個語法來建立物件？",
@@ -1092,14 +1092,14 @@ const questionBank = [
             "CREATE (TABLE Student ID INT...)"
         ],
         ans: 0,
-        [cite_start]expl: "建立資料表的標準語法為 CREATE TABLE [表名] (欄位定義...); [cite: 315]"
+        expl: "建立資料表的標準語法為 CREATE TABLE [表名] (欄位定義...);"
     },
     {
         id: 91,
         q: "您在某間咖啡廳工作，公司要求您設定網站來儲存購物費用。您需要建議在資料庫中使用某種資料類型，以便根據收費金額執行財務函式。請問您應該建議使用哪一種資料類型？",
         options: ["bit", "decimal", "binary", "varchar"],
         ans: 1,
-        [cite_start]expl: "涉及金額與財務運算時，應選擇精確數值型態。選項中僅 decimal 適合儲存金額並進行數學運算。 [cite: 342]"
+        expl: "涉及金額與財務運算時，應選擇精確數值型態。選項中僅 decimal 適合儲存金額並進行數學運算。"
     },
     {
         id: 92,
@@ -1111,7 +1111,7 @@ const questionBank = [
             "應該先執行 DROP CONSTRAINT"
         ],
         ans: 0,
-        [cite_start]expl: "若資料表已有資料，新增一個 NOT NULL 的欄位時，必須同時給予 DEFAULT 值，否則舊資料無法滿足 NOT NULL 的限制。 [cite: 347]"
+        expl: "若資料表已有資料，新增一個 NOT NULL 的欄位時，必須同時給予 DEFAULT 值，否則舊資料無法滿足 NOT NULL 的限制。"
     },
     {
         id: 93,
@@ -1123,7 +1123,7 @@ const questionBank = [
             "以上皆非"
         ],
         ans: 0,
-        [cite_start]expl: "已註冊的伺服器 (Registered Servers) 用於管理常用的伺服器連線資訊。 [cite: 356]"
+        expl: "已註冊的伺服器 (Registered Servers) 用於管理常用的伺服器連線資訊。"
     },
     {
         id: 94,
@@ -1135,7 +1135,7 @@ const questionBank = [
             "以上皆是"
         ],
         ans: 0,
-        [cite_start]expl: "在 SSMS 中，反白選取特定語法後按 F5 或執行鈕，只會執行被選取的部分；若無選取則執行全部。 [cite: 362]"
+        expl: "在 SSMS 中，反白選取特定語法後按 F5 或執行鈕，只會執行被選取的部分；若無選取則執行全部。"
     }
 ];
 

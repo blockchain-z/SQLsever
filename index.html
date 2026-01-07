@@ -1458,6 +1458,61 @@ function loadHistory() {
         tbody.appendChild(tr);
     });
 }
+    function startQuiz() {
+    // 取得設定
+    const mode = document.querySelector('input[name="mode"]:checked').value;
+    const count = parseInt(document.querySelector('input[name="count"]:checked').value);
+    
+    currentMode = mode;
+    
+    // === 新增邏輯開始 ===
+    
+    // 1. 強制去重：利用 Map 特性，若有相同 ID 的題目，只保留一個
+    // 這可以防止您不小心複製貼上多次題庫導致的重複問題
+    const uniqueBank = Array.from(new Map(questionBank.map(item => [item.id, item])).values());
+
+    // 2. 專業洗牌 (Fisher-Yates Shuffle)：比 sort(random) 更公平且不會產生重複索引
+    // 建立一個新陣列以免修改到原始題庫
+    const shuffled = [...uniqueBank];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // 交換位置
+    }
+
+    // 3. 切片：只取前 count 題
+    currentQuestions = shuffled.slice(0, Math.min(count, shuffled.length));
+    
+    // === 新增邏輯結束 ===
+
+    // 初始化狀態
+    currentQuestionIndex = 0;
+    userAnswers = new Array(currentQuestions.length).fill(null);
+    score = 0;
+    
+    // UI 切換
+    document.getElementById('start-screen').classList.add('hidden');
+    document.getElementById('result-screen').classList.add('hidden');
+    document.getElementById('quiz-screen').classList.remove('hidden');
+    document.getElementById('hud-mode').innerText = `MODE: ${mode.toUpperCase()}`;
+    
+    // 按鈕顯示邏輯
+    const nextBtn = document.getElementById('next-btn');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    if (currentMode === 'practice') {
+        nextBtn.classList.remove('hidden');
+        submitBtn.classList.add('hidden');
+    } else {
+        nextBtn.classList.remove('hidden'); 
+        submitBtn.classList.add('hidden');
+    }
+
+    // 啟動計時器
+    startTime = Date.now();
+    timerInterval = setInterval(updateTimer, 1000);
+    
+    renderQuestion();
+}
 </script>
 
 </body>

@@ -399,7 +399,94 @@
             <div id="hud-mode">MODE: PRACTICE</div>
             <div class="timer-box">TIME: <span id="timer">00:00</span></div>
         </div>
-        
+        <svg width="600" height="350" viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="10" width="580" height="330" rx="10" fill="#050510" stroke="#00f3ff" stroke-width="2"/>
+  
+  <rect x="10" y="10" width="580" height="40" rx="10" fill="rgba(0, 243, 255, 0.2)"/>
+  <text x="300" y="35" font-family="monospace" font-size="20" fill="#00f3ff" text-anchor="middle" font-weight="bold">Table Schema: 員工 (Employee)</text>
+
+  <line x1="10" y1="80" x2="590" y2="80" stroke="#00f3ff" stroke-width="1"/>
+  <text x="50" y="70" font-family="monospace" font-size="16" fill="#bc13fe" font-weight="bold">資料行名稱 (Column)</text>
+  <text x="400" y="70" font-family="monospace" font-size="16" fill="#bc13fe" font-weight="bold">資料類型 (Type)</text>
+
+  <g font-family="monospace" font-size="14" fill="#fff">
+    <text x="50" y="110">員工編號 (PK)</text> <text x="400" y="110" fill="#aaa">int</text>
+    <text x="50" y="140">姓名</text>        <text x="400" y="140" fill="#aaa">varchar(20)</text>
+    <text x="50" y="170">職稱</text>        <text x="400" y="170" fill="#aaa">varchar(20)</text>
+    <text x="50" y="200">性別</text>        <text x="400" y="200" fill="#aaa">varchar(2)</text>
+    <text x="50" y="230">主管</text>        <text x="400" y="230" fill="#aaa">int</text>
+    <text x="50" y="260">出生日期</text>    <text x="400" y="260" fill="#aaa">date</text>
+    <text x="50" y="290">任用日期</text>    <text x="400" y="290" fill="#aaa">date</text>
+    <text x="50" y="320">地址</text>        <text x="400" y="320" fill="#aaa">varchar(60)</text>
+  </g>
+</svg>
+        <svg width="500" height="200" viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .cell { fill: none; stroke: #bc13fe; stroke-width: 1; }
+    .txt { font-family: 'Share Tech Mono', monospace; fill: #fff; font-size: 16px; dominant-baseline: middle; text-anchor: middle; }
+    .header { fill: rgba(188, 19, 254, 0.2); }
+  </style>
+  
+  <rect x="10" y="10" width="160" height="40" class="cell header"/>
+  <rect x="170" y="10" width="160" height="40" class="cell header"/>
+  <rect x="330" y="10" width="160" height="40" class="cell header"/>
+  
+  <text x="90" y="30" class="txt" fill="#00f3ff" font-weight="bold">StudentName</text>
+  <text x="250" y="30" class="txt" fill="#00f3ff" font-weight="bold">GradeLevel</text>
+  <text x="410" y="30" class="txt" fill="#00f3ff" font-weight="bold">DaysAbsent</text>
+
+  <rect x="10" y="50" width="160" height="40" class="cell"/> <text x="90" y="70" class="txt">John</text>
+  <rect x="170" y="50" width="160" height="40" class="cell"/> <text x="250" y="70" class="txt">12</text>
+  <rect x="330" y="50" width="160" height="40" class="cell"/> <text x="410" y="70" class="txt">12.5</text>
+
+  <rect x="10" y="90" width="160" height="40" class="cell"/> <text x="90" y="110" class="txt">Holly</text>
+  <rect x="170" y="90" width="160" height="40" class="cell"/> <text x="250" y="110" class="txt">12</text>
+  <rect x="330" y="90" width="160" height="40" class="cell"/> <text x="410" y="110" class="txt">10.0</text>
+
+  <rect x="10" y="130" width="160" height="40" class="cell"/> <text x="90" y="150" class="txt">David</text>
+  <rect x="170" y="130" width="160" height="40" class="cell"/> <text x="250" y="150" class="txt">12</text>
+  <rect x="330" y="130" width="160" height="40" class="cell"/> <text x="410" y="150" class="txt">3.0</text>
+</svg>
+        <svg width="500" height="350" viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .grid { fill: none; stroke: #0aff00; stroke-width: 1; stroke-opacity: 0.5; }
+    .txt-g { font-family: 'Share Tech Mono', monospace; fill: #ddd; font-size: 14px; text-anchor: start; }
+    .head-t { fill: #0aff00; font-weight: bold; }
+  </style>
+
+  <rect x="0" y="0" width="500" height="350" fill="#050510" />
+  
+  <line x1="20" y1="40" x2="480" y2="40" stroke="#0aff00" stroke-width="2"/>
+  <text x="30" y="30" class="txt-g head-t">Type</text>
+  <text x="180" y="30" class="txt-g head-t">Color</text>
+  <text x="330" y="30" class="txt-g head-t">Origin</text>
+
+  <g transform="translate(0, 30)">
+    <text x="30" y="40" class="txt-g">Sedan</text>       <text x="180" y="40" class="txt-g">Red</text>    <text x="330" y="40" class="txt-g">Japan</text>
+    <line x1="20" y1="50" x2="480" y2="50" class="grid"/>
+    
+    <text x="30" y="70" class="txt-g">Truck</text>       <text x="180" y="70" class="txt-g">Red</text>    <text x="330" y="70" class="txt-g">USA</text>
+    <line x1="20" y1="80" x2="480" y2="80" class="grid"/>
+
+    <text x="30" y="100" class="txt-g">Minivan</text>     <text x="180" y="100" class="txt-g">Silver</text> <text x="330" y="100" class="txt-g">Japan</text>
+    <line x1="20" y1="110" x2="480" y2="110" class="grid"/>
+
+    <text x="30" y="130" class="txt-g">Hatchback</text>   <text x="180" y="130" class="txt-g">Red</text>    <text x="330" y="130" class="txt-g">Japan</text>
+    <line x1="20" y1="140" x2="480" y2="140" class="grid"/>
+
+    <text x="30" y="160" class="txt-g">Compact</text>     <text x="180" y="160" class="txt-g">Black</text>  <text x="330" y="160" class="txt-g">Japan</text>
+    <line x1="20" y1="170" x2="480" y2="170" class="grid"/>
+
+    <text x="30" y="190" class="txt-g">SUV</text>         <text x="180" y="190" class="txt-g">Silver</text> <text x="330" y="190" class="txt-g">Germany</text>
+    <line x1="20" y1="200" x2="480" y2="200" class="grid"/>
+
+    <text x="30" y="220" class="txt-g">Convertible</text> <text x="180" y="220" class="txt-g">Black</text>  <text x="330" y="220" class="txt-g">USA</text>
+    <line x1="20" y1="230" x2="480" y2="230" class="grid"/>
+    
+    <text x="30" y="250" class="txt-g">Hybrid</text>      <text x="180" y="250" class="txt-g">Black</text>  <text x="330" y="250" class="txt-g">Germany</text>
+    <line x1="20" y1="260" x2="480" y2="260" class="grid"/>
+  </g>
+</svg>
         <div style="display: flex; align-items: center; margin-bottom: 15px;">
             <span style="font-family: 'Share Tech Mono'">PROGRESS:</span>
             <div class="progress-bar">
@@ -1078,6 +1165,62 @@ const questionBank = [
         options: ["OR ship_state <> 'CA'", "AND ship_state <> 'CA'", "AND ship_state LIKE 'CA'", "OR LIKE..."],
         ans: 1,
         expl: "同時滿足兩個條件需使用 AND，且「不等於」運算子為 <>。 [cite: 919]"
+    }
+    // === 補強遺漏題目：Page 6-7 & Page 8 ===
+    {
+        id: 90,
+        q: "您正在建立一個名為 Student 的資料庫物件來儲存以下資料：ID(INT), Name(VARCHAR), Age(INT)。請問您應該使用哪一個語法來建立物件？",
+        options: [
+            "CREATE TABLE Student (ID INT, Name VARCHAR(100), Age INT)",
+            "CREATE TABLE (ID INT, Name VARCHAR(100), Age INT)",
+            "CREATE Student (ID INT, Name VARCHAR(100), Age INT)",
+            "CREATE (TABLE Student ID INT...)"
+        ],
+        ans: 0,
+        [cite_start]expl: "建立資料表的標準語法為 CREATE TABLE [表名] (欄位定義...); [cite: 315]"
+    },
+    {
+        id: 91,
+        q: "您在某間咖啡廳工作，公司要求您設定網站來儲存購物費用。您需要建議在資料庫中使用某種資料類型，以便根據收費金額執行財務函式。請問您應該建議使用哪一種資料類型？",
+        options: ["bit", "decimal", "binary", "varchar"],
+        ans: 1,
+        [cite_start]expl: "涉及金額與財務運算時，應選擇精確數值型態。選項中僅 decimal 適合儲存金額並進行數學運算。 [cite: 342]"
+    },
+    {
+        id: 92,
+        q: "另一位開發人員嘗試執行：ALTER TABLE Person ADD Prefix varchar(4) NOT NULL; 卻收到錯誤。若 Person 資料表不是空的，可能原因為何？",
+        options: [
+            "應該使用 DEFAULT 關鍵字設定預設值",
+            "Person 資料表是空的",
+            "varchar(4) 不適用於 Person 資料表",
+            "應該先執行 DROP CONSTRAINT"
+        ],
+        ans: 0,
+        [cite_start]expl: "若資料表已有資料，新增一個 NOT NULL 的欄位時，必須同時給予 DEFAULT 值，否則舊資料無法滿足 NOT NULL 的限制。 [cite: 347]"
+    },
+    {
+        id: 93,
+        q: "關於 SQL Server Management Studio 的查詢環境，下列敘述何者正確？",
+        options: [
+            "已註冊的伺服器視窗：用來管理常使用的 SQL Server，註冊後連線不須重複輸入位址",
+            "物件總管視窗：僅顯示 SQL 語法",
+            "SQL Query 視窗：只能執行一行指令",
+            "以上皆非"
+        ],
+        ans: 0,
+        [cite_start]expl: "已註冊的伺服器 (Registered Servers) 用於管理常用的伺服器連線資訊。 [cite: 356]"
+    },
+    {
+        id: 94,
+        q: "關於 SQL Server Management Studio 的查詢環境，關於【執行】鈕的敘述，何者正確？",
+        options: [
+            "若要執行 SQL Query 視窗中的語法，選取後按此鈕或 F5 即可執行",
+            "結果視窗不會顯示執行結果",
+            "訊息視窗只會顯示錯誤，不會顯示 PRINT 結果",
+            "以上皆是"
+        ],
+        ans: 0,
+        [cite_start]expl: "在 SSMS 中，反白選取特定語法後按 F5 或執行鈕，只會執行被選取的部分；若無選取則執行全部。 [cite: 362]"
     }
 ];
 
